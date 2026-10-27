@@ -23,8 +23,8 @@ def summarize(records: list) -> dict:
     n = len(records)
     return {
         "samples": n,
-        "first": records[0]["ts"] if records else None,
-        "last": records[-1]["ts"] if records else None,
+        "first": records[0].get("ts") if records else None,
+        "last": records[-1].get("ts") if records else None,
         "temp_min": min(temps) if temps else None,
         "temp_avg": round(sum(temps) / len(temps), 2) if temps else None,
         "temp_max": max(temps) if temps else None,

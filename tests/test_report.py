@@ -62,6 +62,15 @@ class SummarizeTest(unittest.TestCase):
         self.assertIsNone(s["temp_min"])
         self.assertIsNone(s["temp_avg"])
 
+    def test_record_without_ts_does_not_crash(self):
+        # a valid-JSON line missing "ts" must not raise (read_all skips only
+        # unparseable lines); first/last degrade to None
+        s = report.summarize([{"temp_c": 50.0, "flags": [], "events": []}])
+        self.assertEqual(s["samples"], 1)
+        self.assertIsNone(s["first"])
+        self.assertIsNone(s["last"])
+        self.assertEqual(s["temp_avg"], 50.0)
+
     def test_events_capped_at_twenty(self):
         records = [rec(i, events=[f"E{i}"]) for i in range(30)]
         s = report.summarize(records)
