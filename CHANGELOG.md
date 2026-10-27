@@ -1,7 +1,9 @@
 # Changelog
 
-## Unreleased
+## 1.0.1 — 2026-10-28
 
+- Fixed: `make zipapp` failed on a fresh checkout because the `dist/`
+  directory did not exist yet; it is now created on demand.
 - Fixed: `pi-guard report` crashed with a KeyError on history records that
   predate the `ts` field; such records are now tolerated.
 - Added: dedicated unit tests for the history report module (+11, 44 total).

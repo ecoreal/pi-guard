@@ -7,5 +7,5 @@ whole pipeline can be exercised on any machine.
 MIT license.
 """
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 TOOL = "pi-guard"
