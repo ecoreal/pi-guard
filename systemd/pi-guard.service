@@ -1,0 +1,16 @@
+[Unit]
+Description=pi-guard Raspberry Pi thermal/throttle watchdog
+Documentation=man:pi-guard(1)
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/pi-guard run --interval 10
+Restart=always
+RestartSec=10
+# vcgencmd lives in the 'video' group on Raspberry Pi OS
+SupplementaryGroups=video
+Nice=5
+
+[Install]
+WantedBy=multi-user.target

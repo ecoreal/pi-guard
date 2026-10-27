@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pi-guard"
+version = "1.0.0"
+description = "Raspberry Pi thermal / throttle / under-voltage watchdog with JSONL history, threshold alerts and hooks."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+authors = [{ name = "pi-guard contributors" }]
+keywords = ["raspberry-pi", "raspberrypi", "thermal", "throttling", "undervoltage", "monitoring", "vcgencmd"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Topic :: System :: Monitoring",
+    "Topic :: System :: Hardware",
+]
+
+[project.urls]
+Homepage = "https://github.com/example/pi-guard"
+
+[project.scripts]
+pi-guard = "pi_guard.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
