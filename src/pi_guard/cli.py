@@ -99,7 +99,9 @@ def cmd_report(args) -> int:
 def cmd_decode(args) -> int:
     raw = args.mask
     try:
-        mask = int(raw, 16) if raw.lower().startswith("0x") else int(raw, 16)
+        # vcgencmd reports the mask in hex; int(x, 16) also accepts "0x…" so
+        # both "0x20000" and "20000" parse as the same (hex) mask.
+        mask = int(raw, 16)
     except ValueError:
         print(f"pi-guard: not a hex bitmask: {raw}", file=sys.stderr)
         return 2

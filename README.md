@@ -54,7 +54,7 @@ On the Pi (recommended):
 
 ```bash
 git clone <repo> && cd pi-guard
-make test              # 43 tests — run anywhere, simulation included
+make test              # 44 tests — run anywhere, simulation included
 sudo ./install.sh      # zipapp → /usr/local/bin + systemd service (10s interval)
 ```
 

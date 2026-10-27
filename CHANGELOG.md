@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Fixed: `pi-guard report` crashed with a KeyError on history records that
+  predate the `ts` field; such records are now tolerated.
+- Added: dedicated unit tests for the history report module (+11, 44 total).
+
 ## 1.0.0 — 2026-10-28
 
 Initial release.
