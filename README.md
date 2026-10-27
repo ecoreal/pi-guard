@@ -54,7 +54,7 @@ On the Pi (recommended):
 
 ```bash
 git clone <repo> && cd pi-guard
-make test              # 33 tests — run anywhere, simulation included
+make test              # 43 tests — run anywhere, simulation included
 sudo ./install.sh      # zipapp → /usr/local/bin + systemd service (10s interval)
 ```
 
@@ -114,7 +114,7 @@ make demo   # simulated Pi heats up, throttles, recovers — with live events
   built-in `selftest` that re-verifies them on your actual device.
 - **The `--simulate` source** is deterministic (seeded), so tests are stable
   and the full pipeline (events → JSONL → report → hooks) is exercised
-  end-to-end on non-Pi machines — 33 unit tests run anywhere.
+  end-to-end on non-Pi machines — 43 unit tests run anywhere.
 
 ## License
 
