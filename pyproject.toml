@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pi-guard"
-version = "1.0.0"
+version = "1.0.1"
 description = "Raspberry Pi thermal / throttle / under-voltage watchdog with JSONL history, threshold alerts and hooks."
 readme = "README.md"
 requires-python = ">=3.9"
