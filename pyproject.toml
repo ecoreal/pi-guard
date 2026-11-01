@@ -24,7 +24,7 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/example/pi-guard"
+Homepage = "https://github.com/ecoreal/pi-guard"
 
 [project.scripts]
 pi-guard = "pi_guard.cli:main"

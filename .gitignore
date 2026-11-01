@@ -4,3 +4,6 @@ src/*.egg-info/
 __pycache__/
 *.pyc
 .venv/
+
+# JS tooling remnants (should never be tracked in a Python repo)
+node_modules/
