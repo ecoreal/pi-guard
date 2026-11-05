@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+- Fixed: `--hook` commands now run through the shell, so `$PIGUARD_*`
+  variables actually expand and shell syntax (quoting, `>>`, pipes) works
+  as written. Before, the README example silently sent the literal
+  `$PIGUARD_EVENT @ $PIGUARD_TEMP C ($PIGUARD_FLAGS)` text to ntfy.
+- Fixed: `pi-guard report` no longer crashes on history lines that are
+  valid JSON but have wrong-typed values (`"throttled": "0x4"`,
+  `"flags": null`, bare scalars); such records degrade to empty values
+  instead of taking the whole report down.
+- Added: regression tests for both fixes (+3, 47 total).
+
 ## 1.0.1 — 2026-10-28
 
 - Fixed: `make zipapp` failed on a fresh checkout because the `dist/`

@@ -71,6 +71,27 @@ class SummarizeTest(unittest.TestCase):
         self.assertIsNone(s["last"])
         self.assertEqual(s["temp_avg"], 50.0)
 
+    def test_dirty_typed_lines_degrade_not_crash(self):
+        # valid-JSON lines with wrong-typed values (hand edits, jq rewrites,
+        # bare scalars) degrade to empty values instead of crashing the report
+        dirty = [
+            {"ts": 1, "temp_c": 50.0, "throttled": "0x4", "flags": [], "events": []},
+            {"ts": 2, "temp_c": 55.0, "flags": None, "events": "THROTTLE"},
+            {"ts": "not-a-number", "temp_c": None, "flags": [3, "throttled"]},
+            42,
+        ]
+        s = report.summarize(dirty)
+        self.assertEqual(s["samples"], 4)
+        self.assertEqual(s["throttled_pct"], 0.0)
+        self.assertEqual(s["flag_pct"], {"throttled": 25.0})
+        self.assertEqual(s["first"], 1)
+        self.assertIsNone(s["last"])
+        # last_state + human rendering survive a dirty final line too
+        state = report.last_state(dirty)
+        self.assertEqual(state["throttle_bits"], [])
+        text = report.render_human(s, state)
+        self.assertIn("Throttled     : 0.0%", text)
+
     def test_events_capped_at_twenty(self):
         records = [rec(i, events=[f"E{i}"]) for i in range(30)]
         s = report.summarize(records)

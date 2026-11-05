@@ -25,7 +25,8 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--warn-temp", type=float, default=70.0, metavar="C")
     s.add_argument("--crit-temp", type=float, default=80.0, metavar="C")
     s.add_argument("--hook", default=None, metavar="CMD",
-                   help="command run on every event (env: PIGUARD_EVENT, PIGUARD_TEMP, PIGUARD_FLAGS)")
+                   help="shell command run on every event "
+                        "(env: PIGUARD_EVENT, PIGUARD_TEMP, PIGUARD_FLAGS)")
     s.add_argument("--max-ticks", type=int, default=None, help=argparse.SUPPRESS)
 
     s = sub.add_parser("once", help="print one sample and exit")

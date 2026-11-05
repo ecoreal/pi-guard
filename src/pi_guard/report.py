@@ -8,8 +8,38 @@ import time
 from .collect import decode_throttled
 
 
+def _normalize_record(r) -> dict:
+    """Type-whitelist one history record for the report core.
+
+    read_all() only skips lines that are not valid JSON at all; a *valid*
+    line with wrong-typed values — a bare scalar, or a hand edit / jq rewrite
+    like ``"throttled": "0x4"``, ``"flags": null`` — would raise inside
+    summarize/last_state and take the whole report down. Non-conforming
+    values degrade to their empty equivalents; well-formed records pass
+    through unchanged.
+    """
+    if not isinstance(r, dict):
+        return {}
+    fixed = dict(r)
+    ts = fixed.get("ts")
+    if isinstance(ts, bool) or not isinstance(ts, (int, float)):
+        fixed["ts"] = None
+    throttled = fixed.get("throttled", 0)
+    if isinstance(throttled, bool) or not isinstance(throttled, int):
+        fixed["throttled"] = 0
+    flags = fixed.get("flags", [])
+    if not isinstance(flags, list):
+        flags = []
+    fixed["flags"] = [f for f in flags if isinstance(f, str)]
+    events = fixed.get("events", [])
+    if not isinstance(events, list):
+        fixed["events"] = []
+    return fixed
+
+
 def summarize(records: list) -> dict:
     """Aggregate JSONL records into report statistics."""
+    records = [_normalize_record(r) for r in records]
     temps = [r["temp_c"] for r in records if isinstance(r.get("temp_c"), (int, float))]
     throttled_samples = sum(1 for r in records if r.get("throttled", 0) & 0xF)
     per_flag: dict = {}
@@ -39,7 +69,7 @@ def last_state(records: list) -> dict | None:
     """Latest sample + decoded throttle bits."""
     if not records:
         return None
-    last = records[-1]
+    last = _normalize_record(records[-1])
     return {
         "sample": last,
         "throttle_bits": [d for d in decode_throttled(last.get("throttled", 0)) if d["occurred"]],

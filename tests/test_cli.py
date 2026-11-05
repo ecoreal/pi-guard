@@ -74,6 +74,22 @@ class CliTest(unittest.TestCase):
         self.assertEqual(r.returncode, 0)
         self.assertIn("No history yet", r.stdout)
 
+    def test_report_tolerates_dirty_lines(self):
+        # one wrong-typed-but-valid-JSON line must not take the report down
+        db_dir = tempfile.TemporaryDirectory()
+        self.addCleanup(db_dir.cleanup)
+        db = os.path.join(db_dir.name, "dirty.jsonl")
+        with open(db, "w") as fh:
+            fh.write('{"ts": 1, "temp_c": 50.0, "throttled": 0, "flags": []}\n')
+            fh.write('{"ts": 2, "temp_c": 75.5, "throttled": "0x4",'
+                     ' "flags": null, "events": "THROTTLE"}\n')
+        r = self.run_cli("report", "--db", db)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertIn("Samples       : 2", r.stdout)
+        r = self.run_cli("report", "--db", db, "--json")
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertEqual(json.loads(r.stdout)["summary"]["samples"], 2)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -72,7 +72,9 @@ class MonitorTest(unittest.TestCase):
     def test_hook_receives_event_env(self):
         db = os.path.join(tmpdir(self), "samples.jsonl")
         out_file = os.path.join(tmpdir(self), "hook.out")
-        hook = f"sh -c 'echo $PIGUARD_EVENT >> {out_file}'"
+        # bare shell syntax, exactly like the README example: the hook string
+        # runs through the shell, so $PIGUARD_* expand without a `sh -c` wrapper
+        hook = f"echo $PIGUARD_EVENT flags=$PIGUARD_FLAGS >> {out_file}"
         src = collect.SimulatedSource(seed=3, scenario="throttle")
         mon = monitor.Monitor(src, db=db, hook=hook)
         mon.run(interval=0, max_ticks=40)
@@ -80,6 +82,15 @@ class MonitorTest(unittest.TestCase):
         with open(out_file) as fh:
             content = fh.read()
         self.assertIn("THROTTLE", content)
+        self.assertIn("flags=throttled", content)
+
+    def test_hook_survives_unparsable_command(self):
+        # a hook the shell itself rejects must not take the monitor loop down
+        db = os.path.join(tmpdir(self), "samples.jsonl")
+        src = collect.SimulatedSource(seed=3, scenario="throttle")
+        mon = monitor.Monitor(src, db=db, hook='echo "unterminated')
+        samples = mon.run(interval=0, max_ticks=40)
+        self.assertEqual(len(samples), 40)
 
 
 class ReportTest(unittest.TestCase):

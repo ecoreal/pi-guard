@@ -54,7 +54,7 @@ On the Pi (recommended):
 
 ```bash
 git clone <repo> && cd pi-guard
-make test              # 44 tests — run anywhere, simulation included
+make test              # 47 tests — run anywhere, simulation included
 sudo ./install.sh      # zipapp → /usr/local/bin + systemd service (10s interval)
 ```
 
@@ -83,7 +83,9 @@ Useful flags for `run`: `--interval SEC`, `--warn-temp C`, `--crit-temp C`,
 
 ### Hooks
 
-Every event runs your command with context in the environment:
+Every event runs your command through the shell (`sh -c`), with context in
+the environment — quoting, redirects and `$PIGUARD_*` expansion work exactly
+as written:
 
 ```bash
 pi-guard run --hook 'curl -s -d "$PIGUARD_EVENT @ $PIGUARD_TEMP C ($PIGUARD_FLAGS)" ntfy.sh/my-pi'
@@ -114,7 +116,7 @@ make demo   # simulated Pi heats up, throttles, recovers — with live events
   built-in `selftest` that re-verifies them on your actual device.
 - **The `--simulate` source** is deterministic (seeded), so tests are stable
   and the full pipeline (events → JSONL → report → hooks) is exercised
-  end-to-end on non-Pi machines — 43 unit tests run anywhere.
+  end-to-end on non-Pi machines — 47 tests run anywhere.
 
 ## License
 

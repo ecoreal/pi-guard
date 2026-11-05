@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 import os
-import shlex
 import signal
 import subprocess
 import sys
@@ -121,15 +120,21 @@ class Monitor:
         return events
 
     def _run_hook(self, event: str, sample: dict) -> None:
+        """Run the user hook through the shell so it behaves as written.
+
+        The hook is the user's own command line (see the README examples):
+        running it via `sh -c` keeps quoting, redirects and $PIGUARD_*
+        expansion working exactly as documented. A hook the shell itself
+        rejects only prints a warning; it must not take the loop down.
+        """
         try:
-            argv = shlex.split(self.hook or "")
-            if not argv:
+            if not self.hook or not self.hook.strip():
                 return
             env = dict(os.environ)
             env["PIGUARD_EVENT"] = event
             env["PIGUARD_TEMP"] = str(sample.get("temp_c"))
             env["PIGUARD_FLAGS"] = ",".join(sample.get("flags", []))
-            subprocess.run(argv, env=env, timeout=10,
+            subprocess.run(self.hook, shell=True, env=env, timeout=10,
                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         except (OSError, subprocess.SubprocessError) as err:
             print(f"pi-guard: hook failed: {err}", file=sys.stderr)
